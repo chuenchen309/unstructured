@@ -3,6 +3,7 @@
 ### Fixes
 
 - **Update README.md**: readme-only changes; added a link to Unstructured Pipelines to the README. No library behavior changes.
+- **`_shape_is_off_slide()` no longer misses off-slide PPTX shapes when the other coordinate is exactly `0`**: the off-slide check used `shape.top and shape.left` as a "both coordinates present" guard, but Python's `and` short-circuits on any falsy value, not just `None` - so a shape with a legitimately negative (off-slide) `top` or `left` was not flagged as off-slide whenever its other coordinate was exactly `0` (a common, valid position). The presence check now explicitly tests `is None`, so an actually-off-slide shape is detected regardless of whether its other coordinate is `0`.
 
 ## 0.25.0
 

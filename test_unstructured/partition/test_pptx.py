@@ -556,6 +556,39 @@ def opts_args() -> dict[str, Any]:
 # ================================================================================================
 
 
+class Describe_PptxPartitioner:
+    """Unit-test suite for `unstructured.partition.pptx._PptxPartitioner` objects."""
+
+    # -- ._shape_is_off_slide ---------------------------
+
+    @pytest.mark.parametrize(
+        ("top", "left", "expected_value"),
+        [
+            # -- clearly off-slide, both coordinates negative --
+            (-5000000, -100, True),
+            # -- off-slide top, but left is exactly 0 (a valid, common coordinate, not "missing") --
+            (-5000000, 0, True),
+            # -- off-slide left, but top is exactly 0 --
+            (0, -100, True),
+            # -- on-slide, both coordinates 0 --
+            (0, 0, False),
+            # -- on-slide, both coordinates positive --
+            (100, 100, False),
+            # -- cannot determine (missing coordinates), don't filter --
+            (None, None, False),
+            (None, 100, False),
+            (100, None, False),
+        ],
+    )
+    def it_flags_a_shape_as_off_slide_based_on_negative_coordinates(
+        self, top: int | None, left: int | None, expected_value: bool
+    ):
+        shape = Mock(top=top, left=left)
+        partitioner = _PptxPartitioner(None)  # pyright: ignore [reportArgumentType]
+
+        assert partitioner._shape_is_off_slide(shape) is expected_value
+
+
 class DescribePptxPartitionerOptions:
     """Unit-test suite for `unstructured.partition.xlsx.PptxPartitionerOptions` objects."""
 

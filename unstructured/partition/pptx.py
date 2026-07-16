@@ -323,7 +323,10 @@ class _PptxPartitioner:
     def _shape_is_off_slide(self, shape: Shape) -> bool:
         # NOTE(robinson) - avoid processing shapes that are not on the actual slide
         # NOTE - skip check if no top or left position (shape displayed top left)
-        return bool((shape.top and shape.left) and (shape.top < 0 or shape.left < 0))
+        top, left = shape.top, shape.left
+        if top is None or left is None:
+            return False
+        return top < 0 or left < 0
 
 
 class PptxPartitionerOptions:
